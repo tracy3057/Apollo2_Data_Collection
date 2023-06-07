@@ -3,7 +3,6 @@ import json
 import datetime
 import argparse
 import time
-import os
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -42,21 +41,19 @@ delta = datetime.timedelta(days=1)
 
 # '(Russian AND ukraine AND war) OR (Russian AND ukraine AND conflict) OR (Russian AND ukraine AND invasion) OR (Russophobia) OR (Russophobic ) OR (RussiaPhobia) OR ("Demonise Russia") OR ("stand with Russia") OR ("I stand with Russia") OR ("I stand with Putin") OR (Nazi AND ukraine) OR (Denazify AND Ukraine) OR (Ukraine AND Nazis) OR (Ukraine AND Terrorist AND State) OR (Azov AND Nazi) OR (Minsk AND Accords) OR (Minsk AND Agreements) OR (Zelensky AND Regime) OR (Zelensky AND War AND Criminal) OR (NATO AND Russia AND War) OR (NATO AND War AND Crimes) OR (Protest AND NATO) OR (No AND To AND NATO) OR (Western AND hegemony) OR (US AND neocons) OR ("Biden War") OR ("global South" AND Russia) OR (BRICS AND G7) OR ("BRICS bloc") OR (Prague AND anti-Russian) OR ("Ukrainian Orthodox Church") OR (Minsk AND Merkel)'
 
-try:
-    os.mkdir('./test')
-except:
-    print('folder already exists')
 while (start_date <= end_date):
-    print(start_date)
     ALL_URL = f'https://api.goperigon.com/v1/all?apiKey={args.api_key}&from={start_date.strftime("%Y-%m-%d")}&to={start_date.strftime("%Y-%m-%d")}&sourceGroup=top10&source=eautocheck.de&showNumResults=true&showReprints=false&excludeLabel=Non-news&excludeLabel=Opinion&excludeLabel=Paid News&excludeLabel=Roundup&excludeLabel=Press Release&sortBy=date&source=nytimes.com&source=oryxspioenkop.com&source=mate.substack.com&source=wsj.com&source=pravda.com&source=reuters.com&source=thetimes.co.uk&source=bbc.co.uk&source=cnn.com&source=rt.com&source=reddit.com&source=youtube.com&source=theguardian.com&q={args.keywords}'
-    resp = requests.get(f"{ALL_URL}&size=100&page=0")
-    all_info = resp.json()
     # print(all_info.keys())
-    try:
-        result_cnt = all_info['numResults']
-    except:
-        print("I'm sleeping...")
-        time.sleep(10)
+    while True:
+        try:
+            resp = requests.get(f"{ALL_URL}&size=100&page=0")
+            all_info = resp.json()
+            result_cnt = all_info['numResults']
+            print(start_date)
+            break
+        except:
+            print("I'm sleeping...")
+            time.sleep(10)
     file_name = './test/' + start_date.strftime("%Y-%m-%d") + '_page0' + '_total' + str(result_cnt) + '.json'
     with open(file_name, "w") as f:
         json.dump(all_info, f)
